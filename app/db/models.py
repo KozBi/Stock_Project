@@ -11,4 +11,6 @@ class RawStockData(Base):
     date= Column(Date, nullable=False)
     data=Column(JSON, nullable=False) 
 
+
+
 Base.metadata.create_all(engine)
