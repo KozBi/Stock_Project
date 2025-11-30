@@ -13,5 +13,6 @@ def test_api_connection():
     resp = api.get_eod_historical_stock_market_data(symbol = symbol, period='d', from_date = '2023-01-01', to_date = '2023-01-15', order='a')
     print(resp)
 
-    assert f"{resp[1]['date']}, {symbol}" =="2023-01-04, AAPL.US"
+    assert f"{resp[1]['date']}, {symbol}" =="2023-01-04, AAPL.US" , resp
+   # assert 1==2, resp
 
