@@ -15,7 +15,7 @@ class StockData(Base):
     __tablename__= "stock_data"
     id = Column(Integer, primary_key=True,)
     ticker = Column(String, nullable=False)
-    stock_date= Column(Date, nullable=False)
+    stock_date= Column(String, nullable=False)
     Open=Column(Float, nullable=False) 
     high=Column(Float, nullable=False) 
     low=Column(Float, nullable=False) 

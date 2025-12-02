@@ -33,14 +33,18 @@ def test_upsert_raw_data(session):
     assert row2.data["price"] == 200.0
     assert row2.data["volume"] == 500
 
-#[{'date': '2023-01-03', 'open': 130.28, 'high': 130.9, 'low': 124.17, 'close': 125.07, 'adjusted_close': 123.2112, 'volume': 112117500}, 
-
 def test_upsert_stock_data(session,capsys):
 
     raw_data = [{'date': '2023-01-03', 'open': 130.28, 'high': 130.9, 'low': 124.17, 'close': 125.07, 'adjusted_close': 123.2112, 'volume': 112117500}]
     upsert_stock_data(session, "AAPL.US", raw_data)
     qrow=session.query(StockData).filter_by(ticker="AAPL.US").first()
     assert qrow.ticker =="AAPL.US"
-    print(qrow.ticker)
-   ## assert qrow.data["price"]==123.45
- ##   assert qrow.data["volume"]==1000
+    assert qrow.volume ==112117500
+    assert qrow.high == 130.9
+    
+    raw_data = [{'date': '2023-01-03', 'open': 130.28, 'high': 130.9, 'low': 124.17, 'close': 125.07, 'adjusted_close': 123.2112, 'volume': 200}]
+    upsert_stock_data(session, "AAPL.US", raw_data)
+    qrow=session.query(StockData).filter_by(ticker="AAPL.US").first()
+    assert qrow.volume ==200
+
+

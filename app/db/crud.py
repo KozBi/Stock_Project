@@ -28,7 +28,9 @@ def upsert_stock_data(db: Session, ticker: str, stock_data: list):
     """
     for element in stock_data:
 
-        a=element["date"],
+        a=element["date"]
+        print(a)
+        print(type(a))
 
         stmt = insert(StockData).values(
             ticker=ticker,
@@ -38,13 +40,14 @@ def upsert_stock_data(db: Session, ticker: str, stock_data: list):
             low=element["low"],
             close=element["close"],
             adjusted_close=element["adjusted_close"],
-            volume=element["volume"],
+            volume=element["volume"]
             )
 
         stmt = stmt.on_conflict_do_update(
-            index_elements=['ticker','date'],
+            index_elements=['ticker','stock_date'],
             set_={
-                'stock_date': stmt.excluded.stock_date,
+     #           'stock_date': stmt.excluded.stock_date,
+                'Open': stmt.excluded.Open,
                 "high": stmt.excluded.high,
                 "low": stmt.excluded.low,
                 "close": stmt.excluded.close,
