@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from .models import RawStockData, StockData
 from datetime import date
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import update
 
 def upsert_raw_data(db: Session, ticker: str, raw_json: dict):
     """
@@ -56,3 +57,14 @@ def upsert_stock_data(db: Session, ticker: str, stock_data: list):
             })
         db.execute(stmt)
     db.commit()
+
+def update_volume(db: Session, ticker: str, stock_date: str,values:dict):
+    """Update Stock data by dict:
+    example=volume={'volume':volume}"""
+    stmt=(update(StockData).
+          where(StockData.ticker==ticker).
+          where(StockData.stock_date==stock_date).
+          values(**values))
+    db.execute(stmt)
+    db.commit()
+    

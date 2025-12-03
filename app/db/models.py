@@ -23,6 +23,7 @@ class StockData(Base):
     adjusted_close=Column(Float, nullable=False) 
     volume=Column(Integer, nullable=False) 
 
+    
     __table_args__ = (
         # Prevent duplicate daily records for the same ticker
         UniqueConstraint("ticker", "stock_date", name="uix_ticker_date"),
