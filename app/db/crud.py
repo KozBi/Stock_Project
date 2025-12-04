@@ -29,10 +29,6 @@ def upsert_stock_data(db: Session, ticker: str, stock_data: list):
     """
     for element in stock_data:
 
-        a=element["date"]
-        print(a)
-        print(type(a))
-
         stmt = insert(StockData).values(
             ticker=ticker,
             stock_date=element['date'],
@@ -58,13 +54,21 @@ def upsert_stock_data(db: Session, ticker: str, stock_data: list):
         db.execute(stmt)
     db.commit()
 
-def update_volume(db: Session, ticker: str, stock_date: str,values:dict):
+def update_values(db: Session, ticker: str, stock_date: str,values:dict):
     """Update Stock data by dict:
     example=volume={'volume':volume}"""
     stmt=(update(StockData).
           where(StockData.ticker==ticker).
           where(StockData.stock_date==stock_date).
           values(**values))
-    db.execute(stmt)
+    result=db.execute(stmt)
     db.commit()
+
+    if result.rowcount == 0:
+
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(
+            f"Update skipped: no row found for ticker={ticker}, stock_date={stock_date}"
+        )
     
