@@ -65,10 +65,13 @@ def update_values(db: Session, ticker: str, stock_date: str,values:dict):
     db.commit()
 
     if result.rowcount == 0:
-
+        #do record to update
         import logging
         logger = logging.getLogger(__name__)
         logger.warning(
             f"Update skipped: no row found for ticker={ticker}, stock_date={stock_date}"
         )
+        return False
+    else:
+        return True
     

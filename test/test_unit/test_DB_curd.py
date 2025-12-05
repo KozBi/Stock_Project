@@ -92,23 +92,24 @@ def test_update_values(session_with_values,capsys):
     date_list=[['2023-01-04',{'volume':100}],['2023-01-05',{'Open':100}],['2023-01-09',{'close':100,'volume':50}]]
 
     for d in date_list:
-         update_values(session_with_values,_ticker,d[0],d[1])
+         result=update_values(session_with_values,_ticker,d[0],d[1])
 
     row_1=session_with_values.query(StockData).filter_by(stock_date='2023-01-04').first()
     row_2=session_with_values.query(StockData).filter_by(stock_date='2023-01-05').first()
     row_3=session_with_values.query(StockData).filter_by(stock_date='2023-01-09').first()
     row_4=session_with_values.query(StockData).filter_by(stock_date='2023-01-06').first()
-
+    assert result==True
     assert (row_1.volume)==100
     assert (row_2.Open)==100
     assert (row_3.close)==100
     assert (row_3.volume)==50
 
-         
+def test_update_values_without_record(session):
+    #record doesn't exist in DB. test a fucntion
+    _ticker="AAPL.US"
+    result=update_values(session,_ticker,'2023-01-03',{'volume':100})
+    assert result==False
 
-        # with capsys.disabled():
-        #         print(d[0])
-        #         print(d[1])
 
 
 
