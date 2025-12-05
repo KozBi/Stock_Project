@@ -14,5 +14,5 @@ def test_api_connection():
     print(resp)
 
     assert f"{resp[1]['date']}, {symbol}" =="2023-01-04, AAPL.US" , resp
-   # assert 1==2, resp
+
 

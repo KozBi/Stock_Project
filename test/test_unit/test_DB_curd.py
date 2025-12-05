@@ -110,9 +110,3 @@ def test_update_values_without_record(session):
     result=update_values(session,_ticker,'2023-01-03',{'volume':100})
     assert result==False
 
-
-
-
-
-
-# d
