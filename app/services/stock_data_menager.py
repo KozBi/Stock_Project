@@ -1,5 +1,10 @@
 from db.crud import upsert_raw_data
 from db.models import RawStockData,StockData
+from app.api.eodh_client import EODH_Client
+
+import logging
+
+
 class StockDataMengaer():
     """
     Service layer responsible for orchestrating stock data retrieval and processing.
@@ -8,5 +13,12 @@ class StockDataMengaer():
     If the data does not exist in the database, the external API is called,
     and the ETL process is executed.
     """
-    def __init__(self,raw_data:RawStockData,stockdata:StockData,):
+    def __init__(self,raw_data:RawStockData,stockdata:StockData,eodh_client:EODH_Client):
+        self.raw_data_db=raw_data
+        self.stockdata_db=stockdata
+        self.eodh_client=eodh_client
+
+    def get_stock_data():
+        """Check DB data if data is not found, then call api method."""
         pass
+    

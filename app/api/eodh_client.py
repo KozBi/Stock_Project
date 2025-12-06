@@ -17,7 +17,7 @@ class EODH_Client():
 
         self.api = APIClient(user)
 
-    def get_historical_data(self, _symbol,_period,_from_date:str,_to_date:str,_order='a'):
+    def get_historical_data(self,_symbol,_from_date:str,_to_date:str,_order='a',_period='d'):
         """
         Fetch historical stock data from EODHD API.
 
