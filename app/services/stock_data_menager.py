@@ -1,6 +1,7 @@
 from db.crud import upsert_raw_data
 from db.models import RawStockData,StockData
 from app.api.eodh_client import EODH_Client
+from datetime import datetime
 
 import logging
 
@@ -18,7 +19,7 @@ class StockDataMengaer():
         self.stockdata_db=stockdata
         self.eodh_client=eodh_client
 
-    def get_stock_data():
+    def get_stock_data(ticker:str, from_date:datetime=datetime.now(), to_date:datetime=datetime.now()):
         """Check DB data if data is not found, then call api method."""
-        pass
+        print(to_date)
     

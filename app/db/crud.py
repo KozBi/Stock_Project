@@ -3,6 +3,8 @@ from .models import RawStockData, StockData
 from datetime import date
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy import update
+from datetime import datetime
+from datetime import timedelta
 
 def upsert_raw_data(db: Session, ticker: str, raw_json: dict):
     """
@@ -74,4 +76,28 @@ def update_values(db: Session, ticker: str, stock_date: str,values:dict):
         return False
     else:
         return True
+    
+
+def data_ticker_valid(db: Session, ticker: str, date_from: datetime, date_to: datetime):
+    # pobierz wszystkie daty z bazy dla zakresu
+    rows = db.query(StockData.stock_date).filter(
+        StockData.ticker == ticker,
+        StockData.stock_date >= date_from,
+        StockData.stock_date <= date_to
+    ).all()
+
+    # zamień na zbiór dat (stringi YYYY-MM-DD)
+    existing = {row[0].strftime("%Y-%m-%d") for row in rows}
+
+    # sprawdź każdą datę w zakresie
+    missing = []
+    current = date_from
+    while current <= date_to:
+        date_str = current.strftime("%Y-%m-%d")
+        if date_str not in existing:
+            missing.append(date_str)
+        current += timedelta(days=1)
+
+    # zwróć True/False + listę brakujących dat
+    return len(missing) == 0, missing
     
