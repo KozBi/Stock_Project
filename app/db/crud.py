@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from .models import RawStockData, StockData
 from datetime import date
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import update
-from datetime import datetime
+from sqlalchemy import update, select
+from datetime import datetime, date
 from datetime import timedelta
 
 def upsert_raw_data(db: Session, ticker: str, raw_json: dict):
@@ -78,26 +78,41 @@ def update_values(db: Session, ticker: str, stock_date: str,values:dict):
         return True
     
 
-def data_ticker_valid(db: Session, ticker: str, date_from: datetime, date_to: datetime):
+def data_ticker_valid(db: Session, ticker: str, date_from: date, date_to: date):
     # pobierz wszystkie daty z bazy dla zakresu
-    rows = db.query(StockData.stock_date).filter(
-        StockData.ticker == ticker,
-        StockData.stock_date >= date_from,
-        StockData.stock_date <= date_to
-    ).all()
+    # rows = db.query(StockData.stock_date).filter(
+    #     StockData.ticker == ticker,
+    #     StockData.stock_date >= date_from,
+    #     StockData.stock_date <= date_to
+    # ).all()
+    # print (rows)
+    # return rows
+#  [('2023-01-03',), ('2023-01-04',),
+# list[tuple['stock_date,]]
 
-    # zamień na zbiór dat (stringi YYYY-MM-DD)
-    existing = {row[0].strftime("%Y-%m-%d") for row in rows}
 
-    # sprawdź każdą datę w zakresie
-    missing = []
-    current = date_from
-    while current <= date_to:
-        date_str = current.strftime("%Y-%m-%d")
-        if date_str not in existing:
-            missing.append(date_str)
-        current += timedelta(days=1)
+    stmt = (
+        select(StockData.stock_date)
+        .where(StockData.ticker == ticker)
+        .where(StockData.stock_date >= date_from)
+        .where(StockData.stock_date <= date_to)
+    )
 
-    # zwróć True/False + listę brakujących dat
-    return len(missing) == 0, missing
+    result = db.execute(stmt)
+    return result.scalars().all()
+    # # zamień na zbiór dat (stringi YYYY-MM-DD)
+    # existing = {row[0].strftime("%Y-%m-%d") for row in rows}
+    
+
+    # # sprawdź każdą datę w zakresie
+    # missing = []
+    # current = date_from
+    # while current <= date_to:
+    #     date_str = current.strftime("%Y-%m-%d")
+    #     if date_str not in existing:
+    #         missing.append(date_str)
+    #     current += timedelta(days=1)
+
+    # # zwróć True/False + listę brakujących dat
+    # return len(missing) == 0, missing
     

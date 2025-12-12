@@ -2,7 +2,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.db.models import Base, RawStockData, StockData
-from app.db.crud import upsert_raw_data, upsert_stock_data, update_values
+from app.db.crud import upsert_raw_data, upsert_stock_data, update_values, data_ticker_valid
+from datetime import datetime,date
 
 #Create temporary DB SQL lite for tests.
 @pytest.fixture
@@ -109,4 +110,15 @@ def test_update_values_without_record(session):
     _ticker="AAPL.US"
     result=update_values(session,_ticker,'2023-01-03',{'volume':100})
     assert result==False
+
+def test_data_ticker_valid(session_with_values,capsys):
+
+    date_from=date(2023, 1, 3)
+    date_to=date(2023, 1, 13)
+    result=data_ticker_valid(session_with_values,"AAPL.US",date_from,date_to)
+    with capsys.disabled():
+        print(result)
+        print("typ")
+        print(type(result[0]))
+    assert len(result)==7
 
