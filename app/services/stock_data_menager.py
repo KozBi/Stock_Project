@@ -1,4 +1,4 @@
-from db.crud import upsert_raw_data
+from app.db.CRUD.stock_crud import upsert_raw_data
 from db.models import RawStockData,StockData
 from app.api.eodh_client import EODH_Client
 from datetime import datetime

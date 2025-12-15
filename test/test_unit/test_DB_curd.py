@@ -2,7 +2,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.db.models import Base, RawStockData, StockData
-from app.db.crud import upsert_raw_data, upsert_stock_data, update_values, data_ticker_valid
+from app.db.CRUD.stock_crud import upsert_stock_data, update_values, insert_non_trading_days
+from app.db.CRUD.raw_data_crud import upsert_raw_data
 from datetime import datetime,date
 
 #Create temporary DB SQL lite for tests.
@@ -58,6 +59,7 @@ def test_upsert_stock_data(session,capsys):
     raw_data = [{'date': '2023-01-03', 'open': 130.28, 'high': 130.9, 'low': 124.17, 'close': 125.07, 'adjusted_close': 123.2112, 'volume': 112117500}]
     upsert_stock_data(session, "AAPL.US", raw_data)
     qrow=session.query(StockData).filter_by(ticker="AAPL.US").first()
+
     assert qrow.ticker =="AAPL.US"
     assert qrow.volume ==112117500
     assert qrow.high == 130.9
@@ -111,14 +113,17 @@ def test_update_values_without_record(session):
     result=update_values(session,_ticker,'2023-01-03',{'volume':100})
     assert result==False
 
-def test_data_ticker_valid(session_with_values,capsys):
+def test_inster_no_trading_days(session,capsys):
 
-    date_from=date(2023, 1, 3)
-    date_to=date(2023, 1, 13)
-    result=data_ticker_valid(session_with_values,"AAPL.US",date_from,date_to)
-    with capsys.disabled():
-        print(result)
-        print("typ")
-        print(type(result[0]))
-    assert len(result)==7
+    values=[(datetime.strptime('2023-01-06', "%Y-%m-%d").date()),(datetime.strptime('2023-01-07', "%Y-%m-%d").date()),date(2023, 1, 11)]
+
+    insert_non_trading_days(session, "AAPL.US", values)
+    qrows=session.query(StockData).filter_by(ticker="AAPL.US").all()
+    assert len(qrows)==3
+    assert qrows[0].stock_date==date(2023, 1, 6)
+    assert qrows[1].stock_date==date(2023, 1, 7)
+    assert qrows[2].stock_date==datetime.strptime('2023-01-11', "%Y-%m-%d").date()
+    assert qrows[0].volume==0, qrows[0].trade_day==False
+    assert qrows[1].volume==0, qrows[1].trade_day==False
+    assert qrows[2].volume==0, qrows[2].trade_day==False
 

@@ -1,5 +1,5 @@
 from .database import get_session, engine
-from sqlalchemy import Integer, String, Column, JSON , Date , UniqueConstraint , Float , Index
+from sqlalchemy import Integer, String, Column, JSON , Date , UniqueConstraint , Float , Index, Boolean
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 Base= declarative_base()
@@ -15,13 +15,14 @@ class StockData(Base):
     __tablename__= "stock_data"
     id = Column(Integer, primary_key=True,)
     ticker = Column(String, nullable=False)
-    stock_date= Column(String, nullable=False)
+    stock_date= Column(Date, nullable=False)
     Open=Column(Float, nullable=False) 
     high=Column(Float, nullable=False) 
     low=Column(Float, nullable=False) 
     close=Column(Float, nullable=False) 
     adjusted_close=Column(Float, nullable=False) 
     volume=Column(Integer, nullable=False) 
+    trade_day=Column(Boolean,nullable=False)
 
     
     __table_args__ = (
@@ -32,4 +33,5 @@ class StockData(Base):
         Index("idx_ticker", "ticker"),
     )
 
+    
 Base.metadata.create_all(engine)
