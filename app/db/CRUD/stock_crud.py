@@ -67,6 +67,10 @@ def insert_non_trading_days(
     ticker: str,
     missing_dates: list[datetime]
 ):
+    """
+    Fill missing dates with deafult values in DB, 
+    trade days - FALSE
+    """
     for d in missing_dates:
         stmt = insert(StockData).values(
             ticker=ticker,
