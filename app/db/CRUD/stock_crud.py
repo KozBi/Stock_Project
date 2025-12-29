@@ -90,8 +90,11 @@ def insert_non_trading_days(
 
     
 
-def data_ticker_valid(db: Session, ticker: str, date_from: date, date_to: date):
-    # check if DB contain all requested data with require dates.
+def data_ticker_valid(db: Session, ticker: str, date_from: date, date_to: date) -> bool:
+    """Check if DB contain all requested data with require dates.
+    Retrun True if all date are available. 
+    If not - False and missing dates"""
+    
     if type(date_from) ==date or  type(date_from) ==date :
         stmt = (
             select(StockData.stock_date)
@@ -112,13 +115,17 @@ def data_ticker_valid(db: Session, ticker: str, date_from: date, date_to: date):
         missing = []
         current = date_from
         while current <= date_to:
-            if current != current.isoweekday() <5: #check only days 
-                if current not in existing:
+            if current not in existing:
                     missing.append(current)
             current += timedelta(days=1)
 
         # zwróć True/False + listę brakujących dat
-        return len(missing) == 0, missing
+        if len(missing) != 0:
+            logging.info("Missing dates in DB")
+            return False, missing
+        
+        return len(missing) == 0
+    
     else:
         logging.debug("Wrong datatype - date must be a date format")
         return False
