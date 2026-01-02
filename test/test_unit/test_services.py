@@ -17,3 +17,6 @@ def test_any_missing_dates():
     assert (datetime.date(2023, 1, 7) in result)
     assert (datetime.date(2023, 1, 8) in result)
     assert (datetime.date(2023, 1, 11) in result)
+
+def test_write_stock_data():
+    pass
